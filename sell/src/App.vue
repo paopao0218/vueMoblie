@@ -1,28 +1,42 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+      <div class="header">
+        <HeaderCom></HeaderCom>
+      </div>
+      <div class="nav">
+          <a href="javaScript:;">商品</a>
+          <a href="javaScript:;">评价</a>
+          <a href="javaScript:;">商家</a>
+      </div>
+      <div class="content">
+
+      </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
-
+import HeaderCom from '@/components/header/header'
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HeaderCom,
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+<style scoped="scoped">
+
+.nav{
+  width: 100%;
+  height: 40px;
+  display: flex;
+}
+.nav a{
+  display: block;
+  flex: 1;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  line-height: 40px;
+  color:rgb(77.85.93);
+  font-size: 14px;
 }
 </style>
