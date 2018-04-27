@@ -1,6 +1,6 @@
-# sell
+# my-project
 
-> sell app
+> moblieApp
 
 ## Build Setup
 

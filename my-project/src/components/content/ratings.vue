@@ -1,19 +1,11 @@
 <template lang="html">
-  <div class="">
-    我是header
-  </div>
+    <div class="">
+      评论
+    </div>
 </template>
 
 <script>
 export default {
-  data(){
-    return{
-
-    }
-  },
-  methods:{
-    
-  }
 }
 </script>
 
