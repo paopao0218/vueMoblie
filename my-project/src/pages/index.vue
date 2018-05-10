@@ -1,7 +1,7 @@
 <template>
   <div>
       <div class="header">
-          <HeaderCom></HeaderCom>
+          <HeaderCom :sellerObj="seller"></HeaderCom>
       </div>
       <div class="nav">
           <ul>
@@ -12,7 +12,7 @@
       </div>
       <div class="content">
         <keep-alive>
-           <router-view></router-view>
+           <router-view :sellerObj='seller'></router-view>
          </keep-alive>
       </div>
   </div>
@@ -28,20 +28,21 @@ export default {
   },
   data(){
     return{
-
+      seller:{},
     }
   },
   created(){
 
   },
   mounted(){
-    this.$http.get('../../../data.json')
+    this.$http.get('../../static/mock/data.json')
     .then((data)=>{
-      console.log(data);
+      var resData=JSON.parse(data.bodyText);
+      this.seller=resData.seller;
     },(error)=>{
       console.log(error)
     })
-  }
+  },
 }
 </script>
 
