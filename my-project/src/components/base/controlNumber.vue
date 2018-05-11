@@ -19,7 +19,7 @@ import Vue from 'vue';
 export default {
   props:{
     goods:{
-      type:Object,
+      // type:Object,
     },
   },
   data(){
@@ -36,7 +36,6 @@ export default {
         Vue.set(this.goods,'count',1);
       }else {
         this.goods.count++;
-        this.$emit('countNumber',this.goods.count)
       }
     },
     dirceNumberFn(){

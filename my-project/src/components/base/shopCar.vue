@@ -1,47 +1,53 @@
 <template lang="html">
-  <div class="shopCar-wrapper" @click='shopCarList'>
-    <div class="shopCar-left">
-        <div class="shopping-car-wrapper">
-            <div class="number-wrapper" v-if="totalCarNumber>0">
-              {{totalCarNumber}}
-            </div>
-            <div class="icon-img-wrapper" :class="{'bg':totalCarNumber>0}">
-                <i class="icon-shopping_cart" :class="{'fff':totalCarNumber>0}"></i>
-            </div>
-        </div>
-        <div class="price-wrapper">
-            <span class="colorCC" :class="{'colorWith':totalCarNumber>0}">￥{{totalFn}}</span>
-        </div>
-        <div class="other-wrapper">
-            <span v-if='sellerObj.deliveryPrice'>另需配送费￥{{sellerObj.deliveryPrice}}元</span>
-        </div>
+  <div class="shop">
+    <div class="shopCar-wrapper" @click='shopCarList'>
+      <div class="shopCar-left">
+          <div class="shopping-car-wrapper">
+              <div class="number-wrapper" v-if="totalCarNumber>0">
+                {{totalCarNumber}}
+              </div>
+              <div class="icon-img-wrapper" :class="{'bg':totalCarNumber>0}">
+                  <i class="icon-shopping_cart" :class="{'fff':totalCarNumber>0}"></i>
+              </div>
+          </div>
+          <div class="price-wrapper">
+              <span class="colorCC" :class="{'colorWith':totalCarNumber>0}">￥{{totalFn}}</span>
+          </div>
+          <div class="other-wrapper">
+              <span v-if='sellerObj.deliveryPrice'>另需配送费￥{{sellerObj.deliveryPrice}}元</span>
+          </div>
+      </div>
+      <div class="shopCar-right">
+        <span class='shopping-span' :class="payClass" @click.stop.preventDefault='goPay'>{{deisMoney}}</span>
+      </div>
     </div>
-    <div class="shopCar-right">
-      <span class='shopping-span' :class="payClass">{{deisMoney}}</span>
-    </div>
+    <transition name='fade'>
     <div class="shopcart-list" v-show='carList'>
         <div class="shopcar-header">
           <h1>购物车</h1>
-          <span>清空</span>
+          <span @click="empty">清空</span>
         </div>
         <!-- 显示和隐藏和总价值有关系的 -->
-        <div class="shopcar-context">
+        <div class="shopcar-context" ref='shopcarContextScroll'>
             <ul>
-              <li v-for='foods in selectFoods()' class="shopcar-li">
-                <div class="foods-name">{{foods.name}}</div>
-                <div class="foods-price">{{foods.count*foods.price}}</div>
+              <li v-for='(itemCont,index) in selectFoods()' class="shopcar-li">
+                <div class="foods-name">{{itemCont.name}}</div>
+                <div class="foods-price">￥{{itemCont.count*itemCont.price}}</div>
                 <div class="foods-control">
-                    <controlNumberCom></controlNumberCom>
+                  <controlNumberCom :goods='selectFoods()'></controlNumberCom>
                 </div>
               </li>
             </ul>
         </div>
     </div>
+    </transition>
   </div>
+
 </template>
 
 <script>
 import controlNumberCom from '@/components/base/controlNumber';
+import BScroll from 'better-scroll';
 export default {
   props:{
     sellerObj:{
@@ -60,7 +66,7 @@ export default {
   data(){
     return{
       totle:0,
-      carList:false,
+      fold:true,
     }
   },
   created(){
@@ -97,6 +103,7 @@ export default {
           return '去结算';
         }
     },
+    // 去结算
     payClass() {
       if (this.totalFn < this.sellerObj.minPrice) {
         return 'not-enough';
@@ -104,14 +111,48 @@ export default {
         return 'enough';
       }
     },
+    carList(){
+      if(!this.totalFn){
+          this.fold=true;
+          return false;
+      }
+      let show=!this.fold;
+      if(show){
+        this.$nextTick(()=>{
+          if(!this.scroll){
+            console.log(this.$refs.shopcarContextScroll)
+            this.scroll=new BScroll(this.$refs.shopcarContextScroll,{
+              click:true,
+            })
+          }else{
+            this.scroll.refresh();
+          }
+        })
+      }
+      return show;
+    },
   },
   methods:{
     shopCarList(){
       if(!this.totalFn){
-        this.carList=false;
+        this.fold=true;
+        return false;
       }else{
-        this.carList=!this.carList;
+        this.fold=!this.fold;
       }
+    },
+    empty(){
+      console.log("1")
+      let foods=this.selectFoods();
+      foods.forEach((item)=>{
+        item.count=0;
+      })
+    },
+    goPay(){
+      if (this.totalFn < this.sellerObj.minPrice) {
+        return false;
+      }
+      window.alert(`去结算${this.totalFn}`);
     }
   }
 }
@@ -235,9 +276,76 @@ export default {
   .shopcart-list{
     position: absolute;
     width: 100%;
-    background: red;
+    background: #fff;
+    bottom: 0px;
+    left: 0px;
+    z-index: 4;
+  }
+    .shopcar-header{
+      width: 100%;
+      padding: 0px 40px;
+      height: 40px;
+      background: #f3f5f7;
+      box-sizing: border-box;
+      border-bottom: 1px solid #dbdee1;
+    }
+      .shopcar-header h1{
+        color: rgb(7,17,27);
+        font-size: 14px;
+        line-height: 24px;
+        padding: 12px 0px;
+        display: block;
+        float: left;
+      }
+      .shopcar-header span{
+        display: block;
+        float: right;
+        font-size: 12px;
+        line-height: 40px;
+        color: rgb(0, 160, 220);
+      }
+.shopcar-context{
+  clear: both;
+  max-height: 120px;
+  overflow: hidden;
+}
+  .shopcar-context ul{
+    padding: 0px 40px;
+    box-sizing: border-box;
   }
     .shopcar-li{
+      width: 100%;
+      height: 44px;
+      padding: 12px 0px;
+      border-bottom: 1px solid #dbdee1;
+      color: #07111b;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .foods-name{
+      display: block;
+      font-size: 14px;
+      line-height: 24px;
+      color: #07111b;
+      float: left;
+    }
+    .foods-price{
+      position: absolute;
+      right: 80px;
+      top: 20px;
+    }
+    .foods-control{
+      float: right;
+      margin-top: 4px;
+    }
 
+
+    .fade-enter-active, .fade-leave-active {
+      transition: all .5s;
+
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+      transform: translateY(100px);
+      opacity: 0;
     }
 </style>
