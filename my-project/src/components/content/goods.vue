@@ -1,46 +1,51 @@
 <template lang="html">
-  <div class="goods-wrapper">
-    <div class="menu-wrapper" ref='meunScroll'>
-      <ul class="meun-ul">
-        <li class="menu-item"  v-for='(item,index) in goods' :class="{'currentClass':index===currentIndex}" @click='meunListClick(index,$event)'>
-          <span class="meun-text">
-            <span class="meun-img" v-if='item.type>0' :class="classMap[item.type]"></span>
-            {{item.name}}
-          </span>
-        </li>
-      </ul>
+  <div class="goods-container">
+    <div class="goods-wrapper">
+      <div class="menu-wrapper" ref='meunScroll'>
+        <ul class="meun-ul">
+          <li class="menu-item"  v-for='(item,index) in goods' :class="{'currentClass':index===currentIndex}" @click='meunListClick(index,$event)'>
+            <span class="meun-text">
+              <span class="meun-img" v-if='item.type>0' :class="classMap[item.type]"></span>
+              {{item.name}}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="foods-wrapper" ref='foodsScroll'>
+         <ul>
+           <li class="item-list item-list-height" v-for='item in goods'>
+             <h2 class="item-title">{{item.name}}</h2>
+             <ol v-for='(itemCont,index) in item.foods' class="border-bottom-color">
+               <li class="item-context" @click="selectedList(itemCont,$event)">
+                 <div class="icon-img">
+                   <img :src="itemCont.icon" alt="" width="57px" height="57px">
+                 </div>
+                 <div class="cont-text">
+                    <h3 class="cont-text-title">{{itemCont.name}}</h3>
+                    <span class="cont-text-dirc" v-if='itemCont.description'>{{itemCont.description}}</span>
+                    <div class="cont-text-number">
+                      <span class="sellCount">月售{{itemCont.sellCount}}份</span>
+                      <span class="rating">好评率{{itemCont.rating}}%</span>
+                    </div>
+                    <div class="cont-text-pirce">
+                      <span class="price-new" >￥{{itemCont.price}}</span>
+                      <span class="price-old" v-if='itemCont.oldPrice'>￥{{itemCont.oldPrice}}</span>
+                    </div>
+                    <div class="control-wrapper">
+                      <controlNumberCom :goods="itemCont"></controlNumberCom>
+                    </div>
+                 </div>
+               </li>
+             </ol>
+           </li>
+         </ul>
+      </div>
+      <div class="shopCar-wrapper">
+          <shop-car-com :sellerObj='sellerObj' :selectFoods='selectFoods'></shop-car-com>
+      </div>
     </div>
-    <div class="foods-wrapper" ref='foodsScroll'>
-       <ul>
-         <li class="item-list item-list-height" v-for='item in goods'>
-           <h2 class="item-title">{{item.name}}</h2>
-           <ol v-for='(itemCont,index) in item.foods' class="border-bottom-color">
-             <li class="item-context">
-               <div class="icon-img">
-                 <img :src="itemCont.icon" alt="" width="57px" height="57px">
-               </div>
-               <div class="cont-text">
-                  <h3 class="cont-text-title">{{itemCont.name}}</h3>
-                  <span class="cont-text-dirc" v-if='itemCont.description'>{{itemCont.description}}</span>
-                  <div class="cont-text-number">
-                    <span class="sellCount">月售{{itemCont.sellCount}}份</span>
-                    <span class="rating">好评率{{itemCont.rating}}%</span>
-                  </div>
-                  <div class="cont-text-pirce">
-                    <span class="price-new" >￥{{itemCont.price}}</span>
-                    <span class="price-old" v-if='itemCont.oldPrice'>￥{{itemCont.oldPrice}}</span>
-                  </div>
-                  <div class="control-wrapper">
-                    <controlNumberCom :goods="itemCont"></controlNumberCom>
-                  </div>
-               </div>
-             </li>
-           </ol>
-         </li>
-       </ul>
-    </div>
-    <div class="shopCar-wrapper">
-        <shop-car-com :sellerObj='sellerObj' :selectFoods='selectFoods'></shop-car-com>
+    <div class="goods-detail-wp">
+      <goodsDetailCom ref="selectfoodsChild" :selectGoods='selectGoods'></goodsDetailCom>
     </div>
   </div>
 </template>
@@ -49,6 +54,7 @@
 import BScroll from 'better-scroll';
 import shopCarCom from '@/components/base/shopCar';
 import controlNumberCom from '@/components/base/controlNumber';
+import goodsDetailCom from '@/components/content/goodsDetail';
 export default {
   props:{
     sellerObj:{
@@ -58,6 +64,7 @@ export default {
   components:{
     shopCarCom,
     controlNumberCom,
+    goodsDetailCom,
   },
   data(){
     return{
@@ -65,6 +72,7 @@ export default {
       heightArray:[],
       scrollY:0,
       goodsCount:'',
+      selectGoods:{},
     }
   },
   computed:{
@@ -107,6 +115,16 @@ export default {
       })
   },
   methods:{
+    selectedList(itemCont,event){
+      if (!event._constructed) {
+        return;
+      }
+      event.preventDefault ;
+      event.preventDefault();
+      this.selectGoods=itemCont;
+      //调用子组件的方法
+      this.$refs.selectfoodsChild.show();
+    },
     meunListClick(index,event){
       let itemListHeight=this.$refs.foodsScroll.getElementsByClassName('item-list-height');//获取 li
       this.foodsScrollFn.scrollToElement(itemListHeight[index],300)
@@ -289,6 +307,10 @@ export default {
   width: 100%;
 }
 .control-wrapper{
+
+}
+
+.goods-detail-wp{
 
 }
 </style>
