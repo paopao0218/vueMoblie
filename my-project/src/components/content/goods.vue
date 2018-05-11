@@ -27,11 +27,11 @@
                     <span class="rating">好评率{{itemCont.rating}}%</span>
                   </div>
                   <div class="cont-text-pirce">
-                    <span class="price-new">￥{{itemCont.price}}</span>
+                    <span class="price-new" >￥{{itemCont.price}}</span>
                     <span class="price-old" v-if='itemCont.oldPrice'>￥{{itemCont.oldPrice}}</span>
                   </div>
                   <div class="control-wrapper">
-                    <controlNumberCom :goods="itemCont" ></controlNumberCom>
+                    <controlNumberCom :goods="itemCont"></controlNumberCom>
                   </div>
                </div>
              </li>
@@ -40,7 +40,7 @@
        </ul>
     </div>
     <div class="shopCar-wrapper">
-        <shopCarCom :sellerObj='sellerObj' :Orders='sellerObjFn'></shopCarCom>
+        <shop-car-com :sellerObj='sellerObj' :selectFoods='selectFoods'></shop-car-com>
     </div>
   </div>
 </template>
@@ -64,7 +64,7 @@ export default {
       goods:[],
       heightArray:[],
       scrollY:0,
- // :totelPirce='' :addMoneySend=''
+      goodsCount:'',
     }
   },
   computed:{
@@ -126,16 +126,17 @@ export default {
         this.heightArray.push(height);
       }
     },
-    sellerObjFn(){
+    selectFoods(){
       let goods=[];
-      this.goods.forEach((tiem,index)=>{
-          tiem.foods.forEach((foods,idx)=>{
-            console.log(foods);
-            goods.push(foods)
+      this.goods.forEach((item,index)=>{
+          item.foods.forEach((foods,idx)=>{
+            if(foods.count){
+              goods.push(foods)
+            }
           })
       })
+      return goods;
     }
-
   },
 }
 </script>

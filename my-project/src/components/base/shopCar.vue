@@ -1,77 +1,118 @@
 <template lang="html">
-  <div class="shopCar-wrapper">
+  <div class="shopCar-wrapper" @click='shopCarList'>
     <div class="shopCar-left">
-
         <div class="shopping-car-wrapper">
-            <div class="number-wrapper" v-if='totleFn>0'>
-              {{Orders.number}}
+            <div class="number-wrapper" v-if="totalCarNumber>0">
+              {{totalCarNumber}}
             </div>
-            <div class="icon-img-wrapper" :class="{'bg':totleFn>0}">
-                <i class="icon-shopping_cart" :class="{'fff':totleFn>0}"></i>
+            <div class="icon-img-wrapper" :class="{'bg':totalCarNumber>0}">
+                <i class="icon-shopping_cart" :class="{'fff':totalCarNumber>0}"></i>
             </div>
         </div>
         <div class="price-wrapper">
-            <!-- <span>￥{{Orders[0].number}}</span> -->
-            <span class="colorCC" :class="{'colorWith':totleFn>0}">￥{{totleFn}}</span>
+            <span class="colorCC" :class="{'colorWith':totalCarNumber>0}">￥{{totalFn}}</span>
         </div>
         <div class="other-wrapper">
-            <span>{{needPrice}}</span>
+            <span v-if='sellerObj.deliveryPrice'>另需配送费￥{{sellerObj.deliveryPrice}}元</span>
         </div>
     </div>
     <div class="shopCar-right">
-      <span class='shopping-span' :class="{'goShopping':minSend=='去结算'}">{{minSend}}</span>
+      <span class='shopping-span' :class="payClass">{{deisMoney}}</span>
+    </div>
+    <div class="shopcart-list" v-show='carList'>
+        <div class="shopcar-header">
+          <h1>购物车</h1>
+          <span>清空</span>
+        </div>
+        <!-- 显示和隐藏和总价值有关系的 -->
+        <div class="shopcar-context">
+            <ul>
+              <li v-for='foods in selectFoods()' class="shopcar-li">
+                <div class="foods-name">{{foods.name}}</div>
+                <div class="foods-price">{{foods.count*foods.price}}</div>
+                <div class="foods-control">
+                    <controlNumberCom></controlNumberCom>
+                </div>
+              </li>
+            </ul>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
+import controlNumberCom from '@/components/base/controlNumber';
 export default {
   props:{
     sellerObj:{
       type:Object
     },
-    Orders:{
-      // type:Array,
+    selectFoods: {
+      type:Function
+    },
+    minPrice:{
+      type:Number,
     }
+  },
+  components:{
+    controlNumberCom,
   },
   data(){
     return{
       totle:0,
+      carList:false,
     }
+  },
+  created(){
+    this.selectFoods();
   },
   computed:{
     //计算总价
-    totleFn(){
-      let totles=this.Orders.price*this.Orders.number;
-      Math.random(totles);
-      // return totles
-      // this.totle=10;
-      return totles;
+    totalFn(){
+      let selectFoods=this.selectFoods(),
+          total=0;
+      selectFoods.forEach((item)=>{
+        total+=item.count*item.price;
+      })
+      return total;
     },
-    //判断是否需要配送费
-    needPrice(){
-      let needMoney=0;
-      let moanye=this.sellerObj.minPrice-this.totleFn;
-      if(moanye>0){
-        needMoney=`另需要配送费${this.sellerObj.deliveryPrice}元`
-      }else if(moanye===0){
-        needMoney=`另需要配送费0元`
+    //购物车数量
+    totalCarNumber(){
+      let selectFoods=this.selectFoods(),
+          carNumber=0;
+      selectFoods.forEach((item)=>{
+          carNumber+=item.count;
+      })
+      return carNumber;
+    },
+    //还差多少元
+    deisMoney(){
+      let selectFoods=this.selectFoods();
+        if(this.totalFn<this.sellerObj.minPrice){
+          let diesM=this.sellerObj.minPrice-this.totalFn;
+          return `还差￥${diesM}元起送`;
+        }else if(this.totalFn===0){
+            return `￥${this.sellerObj.minPrice}元起送`;
+        }else {
+          return '去结算';
+        }
+    },
+    payClass() {
+      if (this.totalFn < this.sellerObj.minPrice) {
+        return 'not-enough';
+      } else {
+        return 'enough';
       }
-      return needMoney;
     },
-    //还差多少元起送
-    minSend(){
-      let needpirce=0;
-      let remaining=this.sellerObj.minPrice-this.totleFn;
-      if(remaining>0){
-        needpirce=`还差￥${remaining}起送`
-      }else if(remaining===0){
-        needpirce='去结算'
-      }else {
-        needpirce='去结算'
+  },
+  methods:{
+    shopCarList(){
+      if(!this.totalFn){
+        this.carList=false;
+      }else{
+        this.carList=!this.carList;
       }
-      return needpirce;
-    },
+    }
   }
 }
 </script>
@@ -177,8 +218,26 @@ export default {
     font-weight: bold;
     font-size: 15px;
   }
-  .shopCar-right .shopping-span.goShopping{
+  .shopCar-right .shopping-span.not-enough{
+    text-align: center;
+    color: #919396;
+    display: block;
+    line-height: 58px;
+    font-weight: bold;
+    font-size: 15px;
+  }
+  .shopCar-right .shopping-span.enough{
     background: green;
     color: #fff;
   }
+
+
+  .shopcart-list{
+    position: absolute;
+    width: 100%;
+    background: red;
+  }
+    .shopcar-li{
+
+    }
 </style>

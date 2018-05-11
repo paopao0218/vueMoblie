@@ -1,17 +1,20 @@
 <template lang="html">
   <div class="control-number">
     <transition name="fade">
-      <div class="control-dersc icon-remove_circle_outline" v-show='goods.count>0' @click="dirceNumberFn">
+      <div class="control-dersc" v-show='goods.count>0' @click="dirceNumberFn">
+        <span class="icon-remove_circle_outline"></span>
       </div>
     </transition>
     <div class="control-context" v-show='goods.count>0'>{{goods.count}}</div>
-
-    <div class="control-add icon-add_circle" v-if='' @click='addNumberFn($event)'></div>
+    <div class="control-add" v-if='' @click='addNumberFn($event)'>
+      <span class="icon-add_circle"></span>
+    </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue';
+
 //如果父级元素没有这个属性，可以通过set方法去定义属性
 export default {
   props:{
@@ -33,6 +36,7 @@ export default {
         Vue.set(this.goods,'count',1);
       }else {
         this.goods.count++;
+        this.$emit('countNumber',this.goods.count)
       }
     },
     dirceNumberFn(){
