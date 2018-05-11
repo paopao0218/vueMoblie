@@ -30,19 +30,21 @@
         <!-- 显示和隐藏和总价值有关系的 -->
         <div class="shopcar-context" ref='shopcarContextScroll'>
             <ul>
-              <li v-for='(itemCont,index) in selectFoods()' class="shopcar-li">
+              <li v-for='(itemCont,index) in selectFoods' class="shopcar-li">
                 <div class="foods-name">{{itemCont.name}}</div>
                 <div class="foods-price">￥{{itemCont.count*itemCont.price}}</div>
                 <div class="foods-control">
-                  <controlNumberCom :goods='selectFoods()'></controlNumberCom>
+                  <controlNumberCom :goods='itemCont'></controlNumberCom>
                 </div>
               </li>
             </ul>
         </div>
     </div>
     </transition>
-  </div>
+    <div class="background-bg" v-show='carList' @click='backgrounBg'>
 
+    </div>
+  </div>
 </template>
 
 <script>
@@ -54,7 +56,7 @@ export default {
       type:Object
     },
     selectFoods: {
-      type:Function
+      type:Array
     },
     minPrice:{
       type:Number,
@@ -70,12 +72,12 @@ export default {
     }
   },
   created(){
-    this.selectFoods();
+    this.selectFoods;
   },
   computed:{
     //计算总价
     totalFn(){
-      let selectFoods=this.selectFoods(),
+      let selectFoods=this.selectFoods,
           total=0;
       selectFoods.forEach((item)=>{
         total+=item.count*item.price;
@@ -84,7 +86,7 @@ export default {
     },
     //购物车数量
     totalCarNumber(){
-      let selectFoods=this.selectFoods(),
+      let selectFoods=this.selectFoods,
           carNumber=0;
       selectFoods.forEach((item)=>{
           carNumber+=item.count;
@@ -93,7 +95,7 @@ export default {
     },
     //还差多少元
     deisMoney(){
-      let selectFoods=this.selectFoods();
+      let selectFoods=this.selectFoods;
         if(this.totalFn<this.sellerObj.minPrice){
           let diesM=this.sellerObj.minPrice-this.totalFn;
           return `还差￥${diesM}元起送`;
@@ -120,7 +122,6 @@ export default {
       if(show){
         this.$nextTick(()=>{
           if(!this.scroll){
-            console.log(this.$refs.shopcarContextScroll)
             this.scroll=new BScroll(this.$refs.shopcarContextScroll,{
               click:true,
             })
@@ -142,8 +143,7 @@ export default {
       }
     },
     empty(){
-      console.log("1")
-      let foods=this.selectFoods();
+      let foods=this.selectFoods;
       foods.forEach((item)=>{
         item.count=0;
       })
@@ -153,6 +153,9 @@ export default {
         return false;
       }
       window.alert(`去结算${this.totalFn}`);
+    },
+    backgrounBg(){
+      this.fold=true;
     }
   }
 }
@@ -348,4 +351,13 @@ export default {
       transform: translateY(100px);
       opacity: 0;
     }
+
+  .background-bg{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    background: rgba(7, 17, 27, 0.6);
+  }
 </style>

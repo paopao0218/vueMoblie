@@ -19,7 +19,7 @@ import Vue from 'vue';
 export default {
   props:{
     goods:{
-      // type:Object,
+      type:Object,
     },
   },
   data(){
@@ -28,10 +28,11 @@ export default {
     }
   },
   created(){
-    Vue.set(this.goods,'count',0);
+
   },
   methods:{
     addNumberFn(event){
+
       if(!this.goods.count){
         Vue.set(this.goods,'count',1);
       }else {

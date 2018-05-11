@@ -79,7 +79,17 @@ export default {
       }
       return 0;
     },
-
+    selectFoods(){
+      let goods=[];
+      this.goods.forEach((item,index)=>{
+          item.foods.forEach((foods,idx)=>{
+            if(foods.count){
+              goods.push(foods)
+            }
+          })
+      })
+      return goods;
+    }
   },
   created(){
       this.classMap=['decrease','discount','guarantee','invoice','special'];
@@ -126,17 +136,6 @@ export default {
         this.heightArray.push(height);
       }
     },
-    selectFoods(){
-      let goods=[];
-      this.goods.forEach((item,index)=>{
-          item.foods.forEach((foods,idx)=>{
-            if(foods.count){
-              goods.push(foods)
-            }
-          })
-      })
-      return goods;
-    }
   },
 }
 </script>
