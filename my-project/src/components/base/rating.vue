@@ -71,11 +71,12 @@ export default {
   },
   methods:{
     checkedFn(){
-      this.onlyContent = !this.onlyContent;
-      this.$emit('checkedContent',this.onlyContent);
+      //this.onlyContent = !this.onlyContent;
+      // 改变属性,只能通过父组件去改变子组件的属性,不然会出现警告
+      this.$emit('checkedChoose',this.onlyContent);
     },
     selectFn(type,even){
-      this.selectType=type;
+      //this.selectType=type;
       this.$emit('checkedContent',type);
     }
   }

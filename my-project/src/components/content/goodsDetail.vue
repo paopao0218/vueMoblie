@@ -32,13 +32,13 @@
             <splitCom></splitCom>
             <div class="rating-choose">
               <h3>商品评价</h3>
-              <RatingsCom :selectType='selectType' :ratings='food.ratings' :ratType="ratType" :onlyContent='onlyContent' v-on:checkedContent='showMsg'></RatingsCom>
+              <RatingsCom :selectType='selectType' :ratings='food.ratings' :ratType="ratType" :onlyContent='onlyContent' @checkedChoose='checkedChooseFn' @checkedContent='showMsg'></RatingsCom>
               <!-- 列表显示 -->
               <div class="rating-list-wrapper">
                   <ul v-show='food.ratings && food.ratings.length!=0'>
-                    <li v-for='ratings in food.ratings' class='rating-list'>
+                    <li v-for='ratings in food.ratings' class='rating-list' v-show='listShow(ratings.rateType,ratings.text)' >
                         <div class="time-context">
-                          <time>{{ratings.rateTime}}</time>
+                          <time>{{ratings.rateTime | formatDate}}</time>
                           <p>
                             <i :class="{'icon-thumb_up':ratings.rateType==1,'icon-thumb_down':ratings.rateType==0}"></i>
                             <span>{{ratings.text}}</span>
@@ -51,6 +51,7 @@
                     </li>
                   </ul>
               </div>
+              <div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
             </div>
           </div>
       </div>
@@ -61,6 +62,7 @@
 <script>
 import Vue from 'vue';
 import BScroll from 'better-scroll';
+import {formatDate} from '../../common/js/date';
 import shopCarCom from '@/components/base/controlNumber';
 import splitCom from '@/components/base/split';
 import RatingCom from '@/components/base/rating';
@@ -94,6 +96,12 @@ export default {
   created(){
 
   },
+  filters:{
+    formatDate(time) {
+      let date = new Date(time);
+      return formatDate(date, 'yyyy-MM-dd hh:mm');
+    }
+  },
   methods:{
     show(){
 
@@ -122,7 +130,21 @@ export default {
       Vue.set(this.food, 'count', 1);
     },
     showMsg(data){
-      console.log(data)
+      this.selectType=data;
+    },
+    checkedChooseFn(data){
+      this.onlyContent = !this.onlyContent;
+    },
+    listShow(type,text){
+      //展示切换 判断  属性是否存在 并且 不等于空内容
+      if (this.onlyContent && !text) {
+        return false;
+      }
+      if (this.selectType === ALL) {
+        return true;
+      } else {
+        return type === this.selectType;
+      }
     }
   }
 }
@@ -315,5 +337,10 @@ export default {
     width: 20px;
     height: 20px;
     border-radius: 50%;
+  }
+  .no-rating{
+    padding: 0px 18px 18px 18px;
+    font-size: 14px;
+    color: #a4a9ae;
   }
 </style>
