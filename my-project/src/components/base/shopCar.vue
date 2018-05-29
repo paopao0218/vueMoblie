@@ -56,7 +56,7 @@ export default {
       type:Object
     },
     selectFoods: {
-      type:Array
+      type:Array//数组
     },
     minPrice:{
       type:Number,

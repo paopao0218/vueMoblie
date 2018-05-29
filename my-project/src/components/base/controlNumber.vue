@@ -1,12 +1,12 @@
 <template lang="html">
   <div class="control-number">
     <transition name="fade">
-      <div class="control-dersc" v-show='goods.count>0' @click="dirceNumberFn">
+      <div class="control-dersc" v-show='goods.count>0' @click.stop.prevent="dirceNumberFn">
         <span class="icon-remove_circle_outline"></span>
       </div>
     </transition>
     <div class="control-context" v-show='goods.count>0'>{{goods.count}}</div>
-    <div class="control-add" v-if='' @click='addNumberFn($event)'>
+    <div class="control-add" v-if='' @click.stop.prevent='addNumberFn($event)'>
       <span class="icon-add_circle"></span>
     </div>
   </div>

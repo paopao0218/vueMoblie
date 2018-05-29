@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="goods-detail-wp">
-      <goodsDetailCom ref="selectfoodsChild" :selectGoods='selectGoods'></goodsDetailCom>
+      <goodsDetailCom ref="selectfoodsChild" :food='selectedGoodes'></goodsDetailCom>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@ export default {
       heightArray:[],
       scrollY:0,
       goodsCount:'',
-      selectGoods:{},
+      selectedGoodes:{},
     }
   },
   computed:{
@@ -119,9 +119,7 @@ export default {
       if (!event._constructed) {
         return;
       }
-      event.preventDefault ;
-      event.preventDefault();
-      this.selectGoods=itemCont;
+      this.selectedGoodes=itemCont;
       //调用子组件的方法
       this.$refs.selectfoodsChild.show();
     },
